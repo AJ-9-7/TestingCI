@@ -146,7 +146,7 @@ jobs:
 #          path: build/StandaloneWindows64
 #
  buildAndroid:
-   needs: testRunner
+   #needs: testRunner
    name: Build for Android 📱
    runs-on: ubuntu-latest
    strategy:
