@@ -42,7 +42,7 @@ jobs:
       - name: Restore Library cache
         uses: actions/cache@v2
         with:
-          path: .github/workflows
+          path: Library
           key: Library-build-Android
           restore-keys: |
             Library-build-
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: build-Android
-          path: .github/workflows
+          path: ./
 
 
 #  testRunner:
