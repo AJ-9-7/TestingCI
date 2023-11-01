@@ -51,10 +51,12 @@ jobs:
       - uses: webbertakken/unity-builder@v2
         with:
           targetPlatform: Android
+          projectPath: ../../
  
       - uses: actions/upload-artifact@v2
         with:
           name: build-Android
+          path: ../../
 
 
 #  testRunner:
