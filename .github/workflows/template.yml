@@ -48,8 +48,9 @@ jobs:
             Library-build-
             Library-
  
-      - uses: webbertakken/unity-builder@v2
+      - uses: webbertakken/unity-builder@v1.2
         with:
+          projectPath: ./
           targetPlatform: Android
  
       - uses: actions/upload-artifact@v2
