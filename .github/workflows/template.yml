@@ -1,9 +1,7 @@
-name: Build project
+name: Unity Actions
 
-on: push
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on:
+  push: {}
 
 jobs:
   checklicense:
@@ -40,38 +38,64 @@ jobs:
           name: ${{ steps.getManualLicenseFile.outputs.filePath }}
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
 
-  buildForAllSupportedPlatforms:
+  test:
+    needs: checklicense
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    name: Run all tests ✨
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-test
+      - uses: game-ci/unity-test-runner@v2
+        id: testRunner
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Test results (all modes)
+          path: ${{ steps.testRunner.outputs.artifactsPath }}
+
+  build:
+    needs: test
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
-          - Android # Build an Android .apk standalone app.
+          #- StandaloneLinux64
+          #- iOS
+          - Android
+          - WebGL
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
           lfs: true
       - uses: actions/cache@v3
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
-          restore-keys: Library-
-      - if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.3.0
-      - uses: game-ci/unity-builder@v3
+      - uses: game-ci/unity-builder@v2
         env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: build/${{ matrix.targetPlatform }}
-      # Return License
+          path: build
       - name: Return license
         uses: game-ci/unity-return-license@v2
         if: always()
+        
