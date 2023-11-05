@@ -75,7 +75,7 @@ jobs:
           #- StandaloneLinux64
           #- iOS
           - Android
-          - WebGL
+          #- WebGL
     steps:
       - uses: actions/checkout@v3
         with:
@@ -91,6 +91,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          customImage: 'unityci/editor:2022.3.4f1-base-0'
       - uses: actions/upload-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
