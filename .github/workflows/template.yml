@@ -23,7 +23,7 @@ jobs:
 
   activation:
     needs: checklicense
-    if: needs.checklicense.outputs.is_unity_license_set == 'false'
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
     name: Request manual activation file 🔑
     runs-on: ubuntu-latest
     steps:
