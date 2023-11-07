@@ -94,7 +94,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Build-${{ matrix.targetPlatform }}
-          path: ./
+          path: .github/workflows
       - name: Return license
         uses: game-ci/unity-return-license@v2
         if: always()
